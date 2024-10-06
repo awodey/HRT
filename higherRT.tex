@@ -22,7 +22,6 @@
 \newcommand{\such}{\;{\big|}\;}
 \newcommand{\parto}{\mathrel{\rightharpoonup}}
 \newcommand{\cc}{\colon}
-
 \newcommand{\tcc}{\,{:}\,}
 \newcommand{\pcacomb}[1]{\mathsf{#1}}
 \newcommand{\brset}[1]{\left\{#1\right\}}
@@ -31,7 +30,7 @@
 \newcommand{\combK}{\pcacomb{K}}
 \newcommand{\combS}{\pcacomb{S}}
 \newcommand{\combI}{\pcacomb{I}}
-\newcommand{\kleq}{\simeq}
+\newcommand{\kleq}{\doteq}
 
 \newcommand{\tand}{\ \text{\textnormal{and}}\ }
 \newcommand{\tor}{\ \text{\textnormal{or}}\ }
@@ -221,7 +220,7 @@
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Toward a higher realizability topos: Notes}
+\title{Toward a higher realizability topos (Notes)}
 \author{Steve Awodey}
 \date{\today}
 \maketitle
@@ -242,15 +241,13 @@ the Yoneda embedding.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{PCAs}
 
-We review the basic definitions of partial combinatory
-algebras and applicative morphisms. For a partial
-function $f\cc A \parto B$ and $a \in A$, the notation $f a \defined$
-means that $f$ is defined for the argument $a$. When $t$ is a term, $t \defined$ means
-that the value of $t$, and hence of all of its subterms, is defined.
+We review the basic definitions of partial combinatory algebras and applicative morphisms, which can be found in \cite{Hoefstra, completions in realizability}.  For a partial
+function $f\cc X \parto Y$  the notation $f x \defined$
+means that $f$ is defined for the argument $x\in X$. For a partial binary operation $x\cdot y$,  the expression $x\cdot y\kleq u\cdot v$ means that if one side is defined then so is the other and they are equal. 
 
 \begin{definition}
-  A \emph{partial combinatory algebra (PCA)} $\A = (A, \cdot, \combK, \combS)$ is a set $A$ together with a
-  partial operation 
+  A \emph{partial combinatory algebra (PCA)} $(A, \cdot, \combK, \combS)$ is a set $A$ together with a
+  partial binary operation 
   \[
   \cdot \ \cc A \times A \parto A
   \]
@@ -265,10 +262,9 @@ that the value of $t$, and hence of all of its subterms, is defined.
     \combS x y z \kleq (x z)(y z) \;,
   \end{equation*}
   %
-  where $\kleq$ means that if one side is defined then so it the other
-  and they are equal. We usually write $x y$ instead of $x \cdot y$,
-  and associate application to the left. Here we only consider
-  non-trivial PCAs that satisfy $\combK \neq \combS$.
+  where write $x y$ instead of $x \cdot y$,
+  and associate application to the left. We only consider
+  non-trivial PCAs, satisfying $\combK \neq \combS$.
 \end{definition}
 
 %\begin{example}
@@ -331,11 +327,61 @@ that the value of $t$, and hence of all of its subterms, is defined.
 \section{Assemblies}
 
 \begin{definition}
-  An \emph{assembly} $(X, \alpha)$ over a PCA $\A$ is a set $X$ together with a map $\alpha : X \to \PP{A}$ such that $\alpha(x) \neq\emptyset$ for all $x\in X$. One says that the elements $a\in \alpha(x)\subseteq A$ are \emph{realizers} for the elements $x \in X$, and every element in the carrier $X$ of the assembly is therefore realized by (at least one) $a\in A$. 
+  An \emph{assembly} $(X, \alpha)$ over a PCA $\A$ is a set $X$ together with a map $\alpha : X \to \PP{A}$ such that $\alpha(x) \neq\emptyset$ for all $x\in X$. One says that the elements $a\in \alpha(x)\subseteq A$  \emph{realize} the element $x$.  Thus every element in the carrier $X$ of the assembly is realized by (at least one) $a\in A$. 
   
-The assembly is called \emph{partitioned} if each subset $\alpha(x)\subseteq A$ is a singleton, so that each $x\in X$ has exactly one realizer.  In that case, we may regard $\alpha$ as a map $\alpha : X \to A$.
+The assembly is called \emph{partitioned} if  the subsets $\alpha(x)\subseteq A$ are all singletons, so that each $x\in X$ has exactly one realizer.  In that case, we may regard $\alpha$ as a map $\alpha : X \to A$.
+
+A \emph{morphism of assemblies} $f : (X, \alpha) \to (Y, \beta)$ is a function $f : X \to Y$ for which there is an element $\phi\in A$ such that, for all $x\in X$ and all $a\in \alpha(x)$, 
+\[
+\phi\cdot a \in \beta(f(x))\,.
+\]
+One says that ``$\phi$ \emph{tracks} $f$''.
 \end{definition}
 
+For \emph{partitioned} assemblies, this condition reduces to 
+\[
+\phi \cdot \alpha(x) \kleq \beta(f(x)) \,,
+\]
+which means that (the left action of) $\phi$ fits into a commutative diagram as follows.
+\[
+\begin{tikzcd}
+X \ar[d, swap,"\alpha"]  \ar[r,"f"] & Y \ar[d, "\beta"] \\  
+A \ar[r,swap,"{\phi\cdot(-)}"] & A	
+ \end{tikzcd}
+ \]
+
+\begin{proposition}
+The category $\mathsf{PAsm}$ of partitioned assemblies has all finite limits. The category $\mathsf{Asm}$ of assemblies is regular and locally cartesian closed.
+\end{proposition}
+
+\begin{proposition} For any partial combinatory algebra $\A$,
+\begin{enumerate}
+\item
+the category of assemblies is the regular completion of the category of partitioned assemblies,
+\[
+\mathsf{Asm} \ =\ \mathsf{PAsm}_{\mathsf{reg/lex}}\,,
+\]
+\item the \emph{realizability topos} $\mathsf{RT}(\A)$ is the exact completion of the lex category $\mathsf{PAsm}(\A)$, which can therefore be constructed as the exact completion of the regular category $\mathsf{Asm}(\A)$,
+\[
+\mathsf{RT(\A)}\ =\ \mathsf{Asm}(\A)_{\mathsf{ex/reg}} \ =\ \mathsf{PAsm}_{\mathsf{ex/lex}}(\A)\,.
+\]
+\end{enumerate}
+The \emph{effective topos} ${\EE}{\!f\!f}$ is the realizability topos of the first Kleene Algebra, 
+\[
+{\EE}{\!f\!f} = \mathsf{RT(\N)}\,.
+\]
+\end{proposition}
+
+
+\bibliographystyle{alpha}
+\bibliography{../references}
+
+%%%
+\end{document}
+%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Old Stuff}
 
 \begin{proposition}
 The presheaf topos $\pshat{\T}$ is the classifying topos for flat $\T$-algebras.  Specifically, for any Grothendieck topos $\EE$, the category of geometric morphisms $\EE \to \pshat{\T}$ is naturally equivalent to the category of $\FP$-functors $\FP(\T,\EE)$ and natural transformations, which may be identified with the category $\TAlg_{\mathrm{flat}}(\EE)$ of flat (internal) $\T$-algebras in $\EE$,
@@ -348,6 +394,7 @@ Now recall that $\T$ may be taken to be the opposite of the full subcategory of 
 \[
 \op{\T}\ \cong\  {\TAlg_{\mathrm{fgf}}(\Set)}\,.
 \]
+
 Unwinding the refinement property of Lemma \ref{lemma:refinement} in terms of the theory $\T$, we obtain a syntactic criterion of flatness:
 
 \begin{proposition}\label{prop:flatalgebra} 
